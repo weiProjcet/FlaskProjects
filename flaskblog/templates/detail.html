@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ blog.title }}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detail.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/commentPagination.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="row" style="margin-top: 20px;">
+        <div class="col"></div>
+        <div class="col-10" style="background-color: #fff;padding: 20px;">
+            <h3 class="page-title">{{ blog.title }}</h3>
+            <p class="question-info">
+                <span>作者：{{ blog.author.username }}</span>
+                <span>时间：{{ blog.create_time }}</span>
+            </p>
+            <hr>
+            <p class="question-content">{{ blog.content }}</p>
+            <hr>
+            <h4 class="comment-group-title">评论（{{ blog.comments|length }}）：</h4>
+            <form action="{{ url_for('blogs.publish_comment') }}" method="post">
+                <!-- CSRF 保护令牌 -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="form-group">
+                    <input type="text" placeholder="请填写评论" name="comment" class="form-control">
+                    <input type="hidden" name="blog_id" value="{{ blog.id }}">
+                </div>
+                <div class="form-group" style="text-align: right;">
+                    <button class="btn btn-primary">评论</button>
+                </div>
+            </form>
+            <ul class="comment-group">
+                {% for comment in comments.items %}
+                    <li>
+                        <div class="user-info">
+                            <img class="avatar" src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="">
+                            <span class="username">{{ comment.author.username }}</span>
+                            <span class="create-time">{{ comment.create_time }}</span>
+                        </div>
+                        <p class="comment-content">{{ comment.comment }}</p>
+                    </li>
+                {% else %}
+                    <p class="no-comment">暂无评论</p>
+                {% endfor %}
+            </ul>
+            <!-- 评论分页控件 -->
+            {% if comments.pages > 1 %}
+                <nav aria-label="Comment pagination">
+                    <ul class="pagination">
+                        <!-- 上一页 -->
+                        {% if comments.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{ url_for('blogs.blog_detail', blog_id=blog.id, page=comments.prev_num) }}">上一页</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">上一页</span>
+                            </li>
+                        {% endif %}
+
+                        <!-- 页码 -->
+                        {% for page_num in comments.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != comments.page %}
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           href="{{ url_for('blogs.blog_detail', blog_id=blog.id, page=page_num) }}">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">…</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- 下一页 -->
+                        {% if comments.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{ url_for('blogs.blog_detail', blog_id=blog.id, page=comments.next_num) }}">下一页</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">下一页</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+        <div class="col"></div>
+    </div>
+{% endblock %}

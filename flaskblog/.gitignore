@@ -1,0 +1,16 @@
+# Virtual environments
+venv/
+
+# Database migrations
+migrations/
+
+# Privacy data
+mydate
+mydate.py
+mydate.*
+
+# PyCharm IDE
+.idea/
+
+# Python cache files
+__pycache__/

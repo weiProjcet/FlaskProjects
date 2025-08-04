@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}首页{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/blogPagination.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="row" style="margin-top: 20px;">
+        <div class="col"></div>
+        <div class="col-10">
+            <!-- 如果是搜索结果，显示搜索关键词 -->
+            {% if q %}
+                <h3>搜索 "{{ q }}" 的结果：</h3>
+            {% endif %}
+            <ul class="question-ul">
+                {% for blog in blogs.items %}
+                    <li>
+                        <div class="side-question">
+                            <img class="side-question-avatar"
+                                 src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="">
+                        </div>
+                        <div class="question-main">
+                            <div class="question-title"><a
+                                    href="{{ url_for('blogs.blog_detail', blog_id=blog.id) }}">{{ blog.title }}</a>
+                            </div>
+                            <div class="question-content">{{ blog.tag }}</div>
+                            <div class="question-detail">
+                                <span class="question-author">{{ blog.author.username }}</span>
+                                <span class="question-time">{{ blog.create_time }}</span>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if blogs.pages > 1 %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <!-- 如果有上一页，显示上一页链接 -->
+                        {% if blogs.has_prev %}
+                            <li class="page-item">
+                                {% if q %}
+                                    <!-- 搜索结果的上一页链接 -->
+                                    <a class="page-link" href="{{ url_for('blogs.search', q=q, page=blogs.prev_num) }}">上一页</a>
+                                {% else %}
+                                    <!-- 首页的上一页链接 -->
+                                    <a class="page-link"
+                                       href="{{ url_for('blogs.index', page=blogs.prev_num) }}">上一页</a>
+                                {% endif %}
+                            </li>
+                        {% else %}
+                            <!-- 没有上一页时，显示禁用状态 -->
+                            <li class="page-item disabled">
+                                <span class="page-link">上一页</span>
+                            </li>
+                        {% endif %}
+
+                        <!-- 显示页码 -->
+                        {% for page_num in blogs.iter_pages() %}
+                            {% if page_num %}
+                                <!-- 当前页码与当前页面不同时，显示可点击链接 -->
+                                {% if page_num != blogs.page %}
+                                    <li class="page-item">
+                                        {% if q %}
+                                            <!-- 搜索结果的页码链接 -->
+                                            <a class="page-link"
+                                               href="{{ url_for('blogs.search', q=q, page=page_num) }}">{{ page_num }}</a>
+                                        {% else %}
+                                            <!-- 首页的页码链接 -->
+                                            <a class="page-link"
+                                               href="{{ url_for('blogs.index', page=page_num) }}">{{ page_num }}</a>
+                                        {% endif %}
+                                    </li>
+                                {% else %}
+                                    <!-- 当前页码，显示激活状态 -->
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <!-- 省略号 -->
+                                <li class="page-item disabled">
+                                    <span class="page-link">…</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- 如果有下一页，显示下一页链接 -->
+                        {% if blogs.has_next %}
+                            <li class="page-item">
+                                {% if q %}
+                                    <!-- 搜索结果的下一页链接 -->
+                                    <a class="page-link" href="{{ url_for('blogs.search', q=q, page=blogs.next_num) }}">下一页</a>
+                                {% else %}
+                                    <!-- 首页的下一页链接 -->
+                                    <a class="page-link"
+                                       href="{{ url_for('blogs.index', page=blogs.next_num) }}">下一页</a>
+                                {% endif %}
+                            </li>
+                        {% else %}
+                            <!-- 没有下一页时，显示禁用状态 -->
+                            <li class="page-item disabled">
+                                <span class="page-link">下一页</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+        <div class="col"></div>
+    </div>
+{% endblock %}

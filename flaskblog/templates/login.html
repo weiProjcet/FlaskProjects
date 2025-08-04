@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}登录{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block body %}
+    <div class="row mt-4">
+        <div class="col"></div>
+        <div class="col">
+            <form method="POST">
+
+                <!-- CSRF 保护令牌 -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                <!-- 通用错误信息 -->
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="exampleInputEmail1">邮箱</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                           name="email" value="{{ request.form.email or '' }}">
+                    {% if errors and 'email' in errors %}
+                        <div class="text-danger">
+                            {% for error in errors.email %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInputPassword1">密码</label>
+                    <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+                    {% if errors and 'password' in errors %}
+                        <div class="text-danger">
+                            {% for error in errors.password %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">立即登录</button>
+                </div>
+
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+{% endblock %}

@@ -1,0 +1,54 @@
+.comment-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.comment-time {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+.comment-content {
+    margin-top: 10px;
+}
+
+/* 评论分页样式 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    list-style: none;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a, .pagination span {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    color: #007bff;
+}
+
+.pagination a:hover {
+    background-color: #e9ecef;
+}
+
+.pagination .active span {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.pagination .disabled span {
+    color: #6c757d;
+    cursor: not-allowed;
+}
