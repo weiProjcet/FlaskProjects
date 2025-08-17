@@ -1,4 +1,5 @@
-from flask import Blueprint, request, render_template, g, redirect, url_for
+import io
+from flask import Blueprint, request, render_template, g, redirect, url_for, send_file
 from sqlalchemy import or_
 from exts import db
 from models import BlogModel, CommentModel
@@ -79,3 +80,25 @@ def publish_comment():
         return redirect(url_for('blogs.blog_detail', blog_id=blog_id))
     else:
         return redirect(url_for('blogs.blog_detail', blog_id=request.form.get('blog_id')))
+
+
+@bp.route('/download/<int:blog_id>')
+def download_blog(blog_id):
+    # 获取博客内容
+    blog = BlogModel.query.get_or_404(blog_id)
+
+    # 将博客内容转换为文本格式
+    content = f"标题：{blog.title}\n作者：{blog.author.username}\n发布时间：{blog.create_time}\n\n{blog.content}"
+
+    # 创建内存中的文件
+    buffer = io.BytesIO()
+    buffer.write(content.encode('utf-8'))
+    buffer.seek(0)
+
+    # 返回文件下载响应
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f'{blog.title}.txt',
+        mimetype='text/plain'
+    )

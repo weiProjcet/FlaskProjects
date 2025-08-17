@@ -2,59 +2,76 @@
 
 {% block title %}发布博客{% endblock %}
 
-{% block head %}{% endblock %}
+{% block head %}
+<style>
+    .char-count {
+        text-align: right;
+        font-size: 0.875em;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .char-count.warning {
+        color: #ffc107;
+    }
+
+    .char-count.error {
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-    <div class="row" style="margin-top: 20px;">
-        <div class="col"></div>
-        <div class="col-10">
-            <h1 style="text-align: center;">发布博客</h1>
-            <form action="#" method="post">
+<div class="row" style="margin-top: 20px;">
+    <div class="col"></div>
+    <div class="col-10">
+        <h1 style="text-align: center;">发布博客</h1>
+        <form action="#" method="post">
 
-                <!-- CSRF 保护令牌 -->
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <!-- CSRF 保护令牌 -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
-                <div class="form-group">
-                    <input type="text" name="title" class="form-control" placeholder="请输入标题"
-                           value="{% if form %}{{ form.title.data or '' }}{% endif %}">
-                    <!-- 标题字段错误提示 -->
-                    {% if errors and 'title' in errors %}
-                        <div class="text-danger">
-                            {% for error in errors.title %}
-                                <small>{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+            <div class="form-group">
+                <input type="text" name="title" class="form-control" placeholder="请输入标题"
+                       value="{% if form %}{{ form.title.data or '' }}{% endif %}">
+                <!-- 标题字段错误提示 -->
+                {% if errors and 'title' in errors %}
+                <div class="text-danger">
+                    {% for error in errors.title %}
+                    <small>{{ error }}</small>
+                    {% endfor %}
                 </div>
-                <div class="form-group">
+                {% endif %}
+            </div>
+            <div class="form-group">
                     <textarea name="tag" class="form-control" rows="3"
-                              placeholder="请输入简要回答">{% if form %}{{ form.tag.data or '' }}{% endif %}</textarea>
-                    <!-- 标签字段错误提示 -->
-                    {% if errors and 'tag' in errors %}
-                        <div class="text-danger">
-                            {% for error in errors.tag %}
-                                <small>{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                              placeholder="请输入简要概述">{% if form %}{{ form.tag.data or '' }}{% endif %}</textarea>
+                <!-- 标签字段错误提示 -->
+                {% if errors and 'tag' in errors %}
+                <div class="text-danger">
+                    {% for error in errors.tag %}
+                    <small>{{ error }}</small>
+                    {% endfor %}
                 </div>
-                <div class="form-group">
+                {% endif %}
+            </div>
+            <div class="form-group">
                     <textarea name="content" class="form-control" rows="10"
                               placeholder="请输入具体回答">{% if form %}{{ form.content.data or '' }}{% endif %}</textarea>
-                    <!-- 内容字段错误提示 -->
-                    {% if errors and 'content' in errors %}
-                        <div class="text-danger">
-                            {% for error in errors.content %}
-                                <small>{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                <!-- 内容字段错误提示 -->
+                {% if errors and 'content' in errors %}
+                <div class="text-danger">
+                    {% for error in errors.content %}
+                    <small>{{ error }}</small>
+                    {% endfor %}
                 </div>
-                <div class="form-group" style="text-align: right;">
-                    <button class="btn btn-primary">发布</button>
-                </div>
-            </form>
-        </div>
-        <div class="col"></div>
+                {% endif %}
+            </div>
+            <div class="form-group" style="text-align: right;">
+                <button class="btn btn-primary">发布</button>
+            </div>
+        </form>
     </div>
+    <div class="col"></div>
+</div>
 {% endblock %}

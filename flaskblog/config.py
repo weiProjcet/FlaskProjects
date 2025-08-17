@@ -16,7 +16,6 @@ SQLALCHEMY_DATABASE_URI = f"{DIALCT}+{DRITVER}://{USERNAME}:{PASSWORD}@{HOSTNAME
 # SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # 配置邮箱
-# tsykxplqngolbfcc
 MAIL_SERVER = 'smtp.qq.com'  # SMTP服务器地址
 MAIL_PORT = 465  # SMTP服务端口
 MAIL_USE_SSL = True  # 启用SSL加密

@@ -4,40 +4,47 @@ import config
 from exts import db, mail, redis_client
 from models import UserModel
 from cores.auth import bp as auth_bp
-from cores.blogs import bp as qa_bp
+from cores.blogs import bp as blogs_bp
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 # 绑定配置文件
 app.config.from_object(config)
 
+# 扩展组件初始化
+# 数据库
 db.init_app(app)
+# 邮件
 mail.init_app(app)
-# 启用 CSRF 保护
+# CSRF 保护
 csrf = CSRFProtect(app)
 
-# 初始化 Redis 连接
-redis_client.init_app(app)  # 初始化应用
-
+# Redis 连接
+redis_client.init_app(app)
+# 数据库迁移
 migrate = Migrate(app, db)
+
+
 # 注册蓝图
 app.register_blueprint(auth_bp)
-app.register_blueprint(qa_bp)
+app.register_blueprint(blogs_bp)
 
 
 # 钩子函数
 @app.before_request
 def my_before_request():
+    # 检查用户是否登录
     user_id = session.get('user_id')
     if user_id:
         user = UserModel.query.get(user_id)
-        setattr(g, 'user', user)
+        setattr(g, 'user', user) # 已登录，全局变量 g.user存储用户信息
     else:
         setattr(g, 'user', None)
 
 
 @app.context_processor
 def my_context_processor():
+    # 上下文处理器，使 user 变量在所有模板中可用
     return {'user': g.user}
 
 
@@ -83,4 +90,5 @@ if __name__ == '__main__':
         print("启动 Flask 应用...")
         print("请确保 Redis 服务器已在后台运行...")
         print("如需同时启动 Celery，请使用: python app.py start")
+        # app.run(debug=True, host='0.0.0.0', port=5000)   可以让同一wifi的访问服务
         app.run(debug=True)

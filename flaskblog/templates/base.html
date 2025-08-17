@@ -5,8 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/bootstrap.4.6.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/init.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/user-dropdown.js') }}"></script>
+
     {% block head %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
+
+    <style>
+        .dropdown-menu {
+            display: block;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+
+
 </head>
 
 <body>
@@ -36,19 +56,27 @@
             </ul>
             <ul class="navbar-nav">
                 {% if user %}
-                    <li class="nav-item">
-                        <span class="nav-link">{{ user.username }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.logout') }}">退出登录</a>
-                    </li>
+                <li class="nav-item dropdown">
+                    <!--                        <span class="nav-link">{{ user.username }}</span>-->
+                    <a class="nav-link" href="#" id="userDropdown" role="button">
+                        {{ user.username }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="#">个人信息</a>
+                        <a class="dropdown-item" href="#">设置</a>
+                        <div class="dropdown-divider"></div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">退出登录</a>
+                </li>
                 {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">登录</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register') }}">注册</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">登录</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.register') }}">注册</a>
+                </li>
                 {% endif %}
 
             </ul>
