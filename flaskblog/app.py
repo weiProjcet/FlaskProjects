@@ -5,6 +5,7 @@ from exts import db, mail, redis_client
 from models import UserModel
 from cores.auth import bp as auth_bp
 from cores.blogs import bp as blogs_bp
+from cores.users import bp as users_bp
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -28,6 +29,7 @@ migrate = Migrate(app, db)
 # 注册蓝图
 app.register_blueprint(auth_bp)
 app.register_blueprint(blogs_bp)
+app.register_blueprint(users_bp)
 
 
 # 钩子函数

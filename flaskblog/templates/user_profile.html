@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+用户资料
+{% endblock %}
+
+{% block body %}
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3>你的信息</h3>
+            </div>
+            <div class="card-body">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-info">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    <!-- CSRF 保护令牌 -->
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                    <div class="form-group">
+                        <label for="image">上传图片:</label>
+                        <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+                        <small class="form-text text-muted">支持格式: JPG, JPEG, PNG, GIF</small>
+                        {% if user_profile and user_profile.image %}
+                            <div class="mt-2">
+                                <p>当前图片:</p>
+                                <img src="{{ url_for('static', filename=user_profile.image) }}"
+                                     alt="用户图片" class="img-fluid" style="max-height: 200px;">
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video">上传视频:</label>
+                        <input type="file" class="form-control-file" id="video" name="video" accept="video/*">
+                        <small class="form-text text-muted">支持格式: MP4, AVI, MOV, WMV；建议不超过100MB</small>
+                        {% if user_profile and user_profile.video %}
+                        <div class="mt-2">
+                            <p>当前视频:</p>
+                            <video controls class="img-fluid" style="max-height: 300px;" preload="metadata">
+                                <source src="{{ url_for('static', filename=user_profile.video) }}">
+                                您的浏览器不支持视频播放。
+                            </video>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">保存资料</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

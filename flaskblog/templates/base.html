@@ -42,14 +42,15 @@
             <ul class="navbar-nav">
                 {% if user %}
                 <li class="nav-item dropdown">
-                    <!--                        <span class="nav-link">{{ user.username }}</span>-->
-                    <a class="nav-link" href="#" id="userDropdown" role="button">
+
+                    <a class="nav-link" href="#" id="userDropdown" role="button" style="position: relative">
                         {{ user.username }}
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="#">个人信息</a>
-                        <a class="dropdown-item" href="#">设置</a>
+                    <div class="dropdown-menu user-dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="{{ url_for('users.profile') }}">个人信息</a>
+                        <a class="dropdown-item" href="#">历史记录</a>
                         <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">设置</a>
                     </div>
                 </li>
                 <li class="nav-item">

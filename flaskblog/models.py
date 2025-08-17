@@ -15,6 +15,22 @@ class UserModel(db.Model):
     join_time = db.Column(db.DateTime, default=datetime.now)
 
 
+class UserProfileModel(db.Model):
+    __tablename__ = 'user_profile'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    # 图片字段，可以存储图片路径或URL
+    image = db.Column(db.String(500), nullable=True)
+    # 视频字段，可以存储视频路径或URL
+    video = db.Column(db.String(500), nullable=True)
+    # 添加创建和更新时间字段
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    # 与UserModel建立一对一关系
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
+    user = db.relationship(UserModel, backref=db.backref('profile', uselist=False, cascade='all, delete-orphan'))
+
+
 class BlogModel(db.Model):
     __tablename__ = 'blog'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
