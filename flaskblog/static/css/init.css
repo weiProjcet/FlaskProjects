@@ -1,3 +1,15 @@
-body{
+body {
     background-color: #f3f3f3;
+}
+
+.dropdown-menu {
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
 }

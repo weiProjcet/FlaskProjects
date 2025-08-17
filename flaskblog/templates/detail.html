@@ -5,30 +5,7 @@
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/detail.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/commentPagination.css') }}">
-<style>
-    .header-container {
-        position: relative;
-        margin-bottom: 1rem;
-    }
 
-    .question-info {
-        text-align: center;
-        margin: 0;
-    }
-
-    .info-text span {
-        margin-right: 15px;
-    }
-
-    .download-btn {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 0.75rem;
-        padding: 0.2rem 0.4rem;
-    }
-</style>
 {% endblock %}
 
 {% block body %}
