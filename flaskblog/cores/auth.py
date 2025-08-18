@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
 from exts import db, redis_client
-from models import UserModel
+from models import UserModel, UserProfileModel
 from .forms import RegisterForm, LoginForm, EmailForm
 import string
 import random
@@ -100,7 +100,16 @@ def register():
             redis_client.hdel("captcha_data", email)
             user = UserModel(email=email, username=username, password=generate_password_hash(password))
             db.session.add(user)
-            db.session.commit()
-            return redirect(url_for('auth.login'))
+
+            db.session.flush()  # 获取 user.id 但不提交
+            # 同时创建用户资料
+            user_profile = UserProfileModel(user_id=user.id)
+            db.session.add(user_profile)
+            try:
+                db.session.commit()
+                return redirect(url_for('auth.login'))
+            except Exception as e:
+                db.session.rollback()
+                return render_template('register.html', error='创建失败，请重试！')
         else:
             return render_template('register.html', errors=form.errors)

@@ -43,8 +43,18 @@ def save_file(file, folder):
 def profile():
     # 获取当前用户的资料
     user_profile = UserProfileModel.query.filter_by(user_id=g.user.id).first()
+    # 如果不存在用户资料，则创建一个
+    if not user_profile:
+        user_profile = UserProfileModel(user_id=g.user.id)
+        db.session.add(user_profile)
+        try:
+            db.session.commit()
+            print(user_profile.user.username)
+        except Exception as e:
+            db.session.rollback()
+            flash("系统错误，请重试")
+            return redirect(url_for('users.profile'))
     if request.method == 'GET':
-        print(user_profile.user.username)
         form = UserProfileForm()
         return render_template('user_profile.html', form=form, user_profile=user_profile)
     else:
