@@ -108,10 +108,13 @@ def profile():
                 user_id=g.user.id
             )
             db.session.add(user_profile)
+            current_app.logger.info(f"{user_profile.user.username}资料已创建")
         try:
             db.session.commit()
+            current_app.logger.info(f"{user_profile.user.username}资料已更新")
             flash("用户资料已更新")
         except Exception:
             db.session.rollback()
+            current_app.logger.error(f"{user_profile.user.username}用户资料更新失败")
             flash("用户资料更新失败")
         return redirect(url_for('users.profile'))

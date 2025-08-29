@@ -6,6 +6,8 @@ from models import UserModel
 from cores.auth import bp as auth_bp
 from cores.blogs import bp as blogs_bp
 from cores.users import bp as users_bp
+from cores.logging_config import setup_logging
+from cores.global_logger import setup_global_logging
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -19,12 +21,13 @@ db.init_app(app)
 mail.init_app(app)
 # CSRF 保护
 csrf = CSRFProtect(app)
+# 初始化日志
+setup_logging(app)
 
 # Redis 连接
 redis_client.init_app(app)
 # 数据库迁移
 migrate = Migrate(app, db)
-
 
 # 注册蓝图
 app.register_blueprint(auth_bp)
@@ -39,9 +42,12 @@ def my_before_request():
     user_id = session.get('user_id')
     if user_id:
         user = UserModel.query.get(user_id)
-        setattr(g, 'user', user) # 已登录，全局变量 g.user存储用户信息
+        setattr(g, 'user', user)  # 已登录，全局变量 g.user存储用户信息
     else:
         setattr(g, 'user', None)
+
+
+setup_global_logging(app)  # 使用日志
 
 
 @app.context_processor

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, current_app
 from exts import db, redis_client
 from models import UserModel, UserProfileModel
 from .forms import RegisterForm, LoginForm, EmailForm
@@ -16,6 +16,7 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     else:
+        current_app.logger.info('用户尝试登录')
         form = LoginForm(request.form)
         if form.validate():
             email = form.email.data
@@ -27,6 +28,7 @@ def login():
                 # cookie：存放登录授权的信息
                 # session：加密后存储在cookie中
                 session['user_id'] = user.id
+                current_app.logger.info(f'用户{user.username}登录成功')
                 return redirect('/')
             else:
                 return render_template('login.html', error='密码错误')
@@ -38,6 +40,7 @@ def login():
 @bp.route('logout')
 def logout():
     session.clear()
+    current_app.logger.info(f'用户退出登录')
     return redirect('/')
 
 
@@ -45,6 +48,7 @@ def logout():
 # bp.route:如果没有指定methods参数，默认就是GET请求
 @bp.route('/captcha/email')
 def get_email_captcha():
+    current_app.logger.info('用户获取验证码')
     # 获取用户输入的邮箱
     # 生成验证码并异步发送邮件，提高响应速度
     email = request.args.get('email')
@@ -83,6 +87,7 @@ def register():
     if request.method == 'GET':
         return render_template('register.html')
     else:
+        current_app.logger.info('用户注册')
         form = RegisterForm(request.form)
         if form.validate():
             email = form.email.data
@@ -107,6 +112,7 @@ def register():
             db.session.add(user_profile)
             try:
                 db.session.commit()
+                current_app.logger.info(f'用户{username}注册成功')
                 return redirect(url_for('auth.login'))
             except Exception as e:
                 db.session.rollback()

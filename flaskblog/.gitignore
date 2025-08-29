@@ -16,3 +16,5 @@ mydate.*
 __pycache__/
 
 static/uploads/*
+
+logs/*git

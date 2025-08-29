@@ -1,5 +1,5 @@
 import io
-from flask import Blueprint, request, render_template, g, redirect, url_for, send_file
+from flask import Blueprint, request, render_template, g, redirect, url_for, send_file,current_app
 from sqlalchemy import or_
 from exts import db
 from models import BlogModel, CommentModel
@@ -17,6 +17,7 @@ def index():
     page = request.args.get('page', 1, type=int)
     blogs = BlogModel.query.order_by(BlogModel.create_time.desc()).paginate(
         page=page, per_page=PER_PAGE, error_out=False)
+
     return render_template('index.html', blogs=blogs)
 
 
@@ -27,6 +28,7 @@ def search():
     blogs = BlogModel.query.filter(
         or_(BlogModel.title.contains(q), BlogModel.tag.contains(q))
     ).paginate(page=page, per_page=PER_PAGE, error_out=False)
+    current_app.logger.info(f'用户{g.user.username}搜索了关键字{q}')
     return render_template('index.html', blogs=blogs, q=q)
 
 
@@ -44,6 +46,7 @@ def publish_blog():
             blog = BlogModel(title=title, tag=tag, content=content, author=g.user)
             db.session.add(blog)
             db.session.commit()
+            current_app.logger.info(f'用户{g.user.username}发布了博客{title}')
             # 跳转到首页
             return redirect('/')
         else:
@@ -77,6 +80,7 @@ def publish_comment():
         comment = CommentModel(comment=comment_data, blog_id=blog_id, author_id=g.user.id)
         db.session.add(comment)
         db.session.commit()
+        current_app.logger.info(f'用户{g.user.username}评论了博客{blog_id}，评论为{comment.id}')
         return redirect(url_for('blogs.blog_detail', blog_id=blog_id))
     else:
         return redirect(url_for('blogs.blog_detail', blog_id=request.form.get('blog_id')))
@@ -94,6 +98,7 @@ def download_blog(blog_id):
     buffer = io.BytesIO()
     buffer.write(content.encode('utf-8'))
     buffer.seek(0)
+    current_app.logger.info(f'用户{g.user.username}下载了博客{blog_id}')
 
     # 返回文件下载响应
     return send_file(
