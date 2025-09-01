@@ -5,6 +5,7 @@
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/detail.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/commentPagination.css') }}">
+<script src="{{ url_for('static', filename='js/detail_download.js') }}"></script>
 
 {% endblock %}
 
@@ -19,13 +20,14 @@
                     <span>作者：{{ blog.author.username }}</span>
                     <span>时间：{{ blog.create_time }}</span>
                 </span>
-                <a href="{{ url_for('blogs.download_blog', blog_id=blog.id) }}"
-                   class="btn btn-outline-secondary download-btn">下载</a>
+                <button id="pdfBtn" class="btn btn-outline-primary btn-sm" onclick="downloadPdf({{ blog.id }})">
+                    <i class="fas fa-file-pdf"></i> 下载PDF
+                </button>
             </p>
         </div>
 
         <hr>
-        <p class="question-content">{{ blog.content }}</p>
+        <p class="question-content">{{ blog.content|safe }}</p>
         <hr>
         <h4 class="comment-group-title">评论（{{ blog.comments|length }}）：</h4>
         <form action="{{ url_for('blogs.publish_comment') }}" method="post">
@@ -106,4 +108,5 @@
     </div>
     <div class="col"></div>
 </div>
+
 {% endblock %}

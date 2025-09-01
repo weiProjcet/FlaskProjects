@@ -3,7 +3,8 @@
 {% block title %}发布博客{% endblock %}
 
 {% block head %}
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/publish.css') }}">
+<script src="{{ url_for('static', filename='js/publish_markdown.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -15,7 +16,6 @@
 
             <!-- CSRF 保护令牌 -->
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-
             <div class="form-group">
                 <input type="text" name="title" class="form-control" placeholder="请输入标题"
                        value="{% if form %}{{ form.title.data or '' }}{% endif %}">
@@ -28,6 +28,7 @@
                 </div>
                 {% endif %}
             </div>
+
             <div class="form-group">
                     <textarea name="tag" class="form-control" rows="3"
                               placeholder="请输入简要概述">{% if form %}{{ form.tag.data or '' }}{% endif %}</textarea>
@@ -40,18 +41,48 @@
                 </div>
                 {% endif %}
             </div>
-            <div class="form-group">
-                    <textarea name="content" class="form-control" rows="10"
-                              placeholder="请输入具体回答">{% if form %}{{ form.content.data or '' }}{% endif %}</textarea>
-                <!-- 内容字段错误提示 -->
-                {% if errors and 'content' in errors %}
-                <div class="text-danger">
-                    {% for error in errors.content %}
-                    <small>{{ error }}</small>
-                    {% endfor %}
+            <!-- Markdown编辑器和预览 -->
+            <div class="editor-container">
+                <div class="tab-buttons">
+                    <div class="tab-button active" data-tab="editor">编辑</div>
+                    <div class="tab-button" data-tab="preview">预览</div>
                 </div>
-                {% endif %}
+
+                <div class="tab-content active" id="editor-tab">
+                        <textarea name="content" id="content" class="form-control" rows="10"
+                                  placeholder="请输入具体回答，支持 Markdown 格式">{% if form %}{{ form.content.data or '' }}{% endif %}</textarea>
+
+                    <div class="format-help mt-2">
+                        <strong>格式化帮助：</strong><br>
+                        <code># 标题</code> → <h4 class="d-inline"># 标题</h4><br>
+                        <code>## 子标题</code> → <h5 class="d-inline">## 子标题</h5><br>
+                        <code>**粗体**</code> → <strong>**粗体**</strong><br>
+                        <code>*斜体*</code> → <em>*斜体*</em><br>
+                        <code>- 列表项</code> → <span>• 列表项</span><br>
+                        <code>[链接](http://)</code> → <a href="#">[链接](http://)</a><br>
+                        <code>![图片](图片地址)</code> → 图片<br>
+                        <code>> 引用</code> → <span style="color: #666;">引用文本</span>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="preview-tab">
+                    <div id="preview-content" class="preview-content">
+                        {% if form and form.content.data %}
+                        {{ form.content.data }}
+                        {% else %}
+                        预览区域
+                        {% endif %}
+                    </div>
+                </div>
             </div>
+            {% if errors and 'content' in errors %}
+            <div class="text-danger">
+                {% for error in errors.content %}
+                <small>{{ error }}</small>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <div class="form-group" style="text-align: center;">
                 <button class="btn btn-primary">发布</button>
             </div>
