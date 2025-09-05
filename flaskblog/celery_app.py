@@ -48,6 +48,8 @@ def create_celery_app():
     celery.conf.update(
         broker_url=app.config['REDIS_URL'],  # Redis 作为消息代理
         result_backend=app.config['REDIS_URL'],  # Redis 作为结果存储
+        result_expires=app.config['CELERY_RESULT_EXPIRES'],  # 任务结果过期时间
+        task_result_expires=app.config['CELERY_TASK_RESULT_EXPIRES'],  # 兼容配置
         broker_connection_retry_on_startup=True,  # 启动时重试连接
     )
 
@@ -115,11 +117,11 @@ def register_chinese_fonts():
         if system == "Windows":
             # 尝试使用Windows系统字体
             windows_font_paths = [
-                 ("SimFang", "C:/Windows/Fonts/simfang.ttf"),
+                ("SimFang", "C:/Windows/Fonts/simfang.ttf"),
                 ("SimHei", "C:/Windows/Fonts/simhei.ttf"),
                 ("SimSun", "C:/Windows/Fonts/simsun.ttc")
             ]
-            for font_name,font_path in windows_font_paths:
+            for font_name, font_path in windows_font_paths:
                 if os.path.exists(font_path):
                     pdfmetrics.registerFont(TTFont(font_name, font_path))
                     return font_name
@@ -145,7 +147,6 @@ def generate_pdf_task(blog_id, task_id):
             blog = BlogModel.query.get(blog_id)
             if not blog:
                 raise ValueError(f"博客 {blog_id} 不存在")
-
 
             # 注册中文字体
             font_name = register_chinese_fonts()

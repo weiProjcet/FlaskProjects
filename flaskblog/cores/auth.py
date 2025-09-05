@@ -8,23 +8,28 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from celery_app import send_email_task
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+"""
+    登录模块
+    login：登录 邮箱、密码
+    logout：退出
+    register：注册
+"""
 
 
-# 登录
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
     else:
         current_app.logger.info('用户尝试登录')
-        form = LoginForm(request.form)
+        form = LoginForm(request.form)  # 验证表单
         if form.validate():
             email = form.email.data
             password = form.password.data
             user = UserModel.query.filter_by(email=email).first()
             if not user:
                 return render_template('login.html', error='用户不存在，请注册！')
-            if check_password_hash(user.password, password):
+            if check_password_hash(user.password, password):  # 密码验证
                 # cookie：存放登录授权的信息
                 # session：加密后存储在cookie中
                 session['user_id'] = user.id
@@ -45,24 +50,23 @@ def logout():
 
 
 # 获取验证码 注册页面提交请求
-# bp.route:如果没有指定methods参数，默认就是GET请求
 @bp.route('/captcha/email')
 def get_email_captcha():
     current_app.logger.info('用户获取验证码')
     # 获取用户输入的邮箱
-    # 生成验证码并异步发送邮件，提高响应速度
     email = request.args.get('email')
     # 检查是否有邮箱参数，避免在模块导入时执行
     if not email:
         return jsonify({"code": 400, "message": "缺少邮箱参数", "data": None})
 
-    form = EmailForm(data={'email': email})
+    form = EmailForm(data={'email': email})  # 验证邮箱
     if not form.validate():
         if 'email' in form.errors:
             return jsonify({"code": 400, "message": form.errors['email'][0], "data": None})
         else:
             return jsonify({"code": 400, "message": "邮箱验证失败", "data": None})
 
+    # 生成验证码并异步发送邮件，提高响应速度
     # 获得验证码
     source = string.digits * 4
     captcha = ''.join(random.sample(source, 4))
@@ -74,14 +78,12 @@ def get_email_captcha():
         body=f"您的验证码是：{captcha}，验证码十分钟内有效！"  # 邮件正文
     )
     # 用redis存储验证信息，并设置过期时间
-    # hset(name, key, value) - name是hash表名，key是字段名，value是字段值
     redis_client.hset("captcha_data", email, captcha)
     redis_client.expire("captcha_data", 600)
     # RESTful API
     return jsonify({"code": 200, "message": "", "data": None})
 
 
-# 注册页面
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
