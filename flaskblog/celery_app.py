@@ -125,6 +125,17 @@ def register_chinese_fonts():
                 if os.path.exists(font_path):
                     pdfmetrics.registerFont(TTFont(font_name, font_path))
                     return font_name
+        elif system == "Linux":
+            # 尝试使用Linux系统字体
+            linux_font_paths = [
+                ("SimHei", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+                ("SimSun", "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"),
+                ("SimFang", "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc")
+            ]
+            for font_name, font_path in linux_font_paths:
+                if os.path.exists(font_path):
+                    pdfmetrics.registerFont(TTFont(font_name, font_path))
+                    return font_name
         return False
     except Exception as e:
         print(f"字体注册失败: {e}")

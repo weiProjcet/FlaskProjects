@@ -11,6 +11,7 @@ mydate.*
 
 # PyCharm IDE
 .idea/
+.env
 
 # Python cache files
 __pycache__/

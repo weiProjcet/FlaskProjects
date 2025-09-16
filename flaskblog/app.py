@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
+import os
 
 import config
 from exts import db, mail, redis_client, cache
@@ -35,4 +36,7 @@ app.register_blueprint(blogs_bp)
 app.register_blueprint(users_bp)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    # 在生产环境中不要使用 debug=True
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0')

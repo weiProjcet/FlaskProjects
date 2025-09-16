@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
             # 启动 Flask 应用
             print("启动 Flask 应用...")
-            app.run(debug=True, use_reloader=False, host='127.0.0.1', port=5000)
+            app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5000)
 
         except KeyboardInterrupt:
             print("\n正在关闭服务...")

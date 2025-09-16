@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  db:
+    image: mysql:8.0
+    container_name: flaskblog_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: FlaskBlog
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: flaskuser
+      MYSQL_PASSWORD: wei123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis服务
+  redis:
+    image: redis:7-alpine
+    container_name: flaskblog_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # Flask应用
+  web:
+    build: .
+    container_name: flaskblog_web
+    restart: always
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=flaskuser
+      - DB_PASSWORD=wei123
+      - DB_NAME=FlaskBlog
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./static/uploads:/app/static/uploads
+    env_file:
+      - .env
+
+  # Celery Worker
+  celery-worker:
+    build: .
+    container_name: flaskblog_celery_worker
+    restart: always
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    env_file:
+      - .env
+    volumes:
+      - ./static/uploads:/app/static/uploads
+    command: celery -A celery_app.celery worker --loglevel=info --pool=threads
+
+
+volumes:
+  db_data:
+  redis_data:
