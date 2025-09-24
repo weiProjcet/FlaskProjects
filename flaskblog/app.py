@@ -15,6 +15,9 @@ from cores.global_logger import setup_global_logging
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
+# 信任反向代理
+app.config['PREFERRED_URL_SCHEME'] = 'https'  # 如果使用HTTPS
+
 # 绑定配置文件
 app.config.from_object(config)
 
