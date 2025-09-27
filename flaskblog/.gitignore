@@ -5,9 +5,7 @@ venv/
 migrations/
 
 # Privacy data
-mydate
-mydate.py
-mydate.*
+core/mydate.py
 
 # PyCharm IDE
 .idea/

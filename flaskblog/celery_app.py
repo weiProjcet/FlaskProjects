@@ -5,10 +5,10 @@ Celery 配置文件，用于异步处理任务（如发送邮件和生成PDF）
 from celery import Celery
 from flask import Flask
 from flask_mail import Message
-from exts import mail, db, redis_client
-from models import BlogModel
+from core.exts import mail, db, redis_client
+from modules.models import BlogModel
 from markdown import markdown
-import config
+from core import config
 import io
 import os
 

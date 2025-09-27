@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import or_
-from exts import db
+from core.exts import db
 
 
 # flask db init  只需要运行一次

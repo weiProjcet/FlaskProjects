@@ -2,15 +2,14 @@ from flask import Flask
 from flask_migrate import Migrate
 import os
 
-import config
-from exts import db, mail, redis_client, cache
-from hooks import register_hooks
+from core import config
+from core.exts import db, mail, redis_client, cache
+from core.hooks import register_hooks
 
-from cores.auth import bp as auth_bp
-from cores.blogs import bp as blogs_bp
-from cores.users import bp as users_bp
-from cores.logging_config import setup_logging
-from cores.global_logger import setup_global_logging
+from modules.Auth import bp as auth_bp
+from modules.Blogs import bp as blogs_bp
+from modules.Users import bp as users_bp
+from common.logging import setup_logging, setup_global_logging
 
 from flask_wtf.csrf import CSRFProtect
 

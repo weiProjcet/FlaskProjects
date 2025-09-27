@@ -1,4 +1,4 @@
-from mydate import Email, AuthorizationCode
+from .mydate import Email, AuthorizationCode
 import os
 
 # 安全密钥，用于各种安全相关的功能。
@@ -45,7 +45,7 @@ CELERY_RESULT_EXPIRES = 3600  # 任务结果1小时后过期
 CELERY_TASK_RESULT_EXPIRES = 3600  # 兼容旧版本配置项
 
 # 文件上传配置
-UPLOAD_FOLDER = os.path.join('static', 'uploads')
+UPLOAD_FOLDER = os.path.join('../static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mov', 'wmv'}
 MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB max file size
 

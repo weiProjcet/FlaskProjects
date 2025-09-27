@@ -1,4 +1,4 @@
-# cores/global_logger.py
+
 from flask import request, g
 import time
 

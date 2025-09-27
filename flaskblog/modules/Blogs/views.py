@@ -1,14 +1,15 @@
 import io
 import uuid
-from flask import Blueprint, request, render_template, g, redirect, url_for, send_file, current_app, jsonify
-from exts import db, redis_client, cache
-from models import BlogModel, CommentModel
-from .forms import BlogFrom, CommentForm
-from decorators import login_required
-from markdown import markdown
-from celery_app import generate_pdf_task  # 导入Celery任务
 
-bp = Blueprint('blogs', __name__, url_prefix='/')
+from flask import request, render_template, redirect, url_for, current_app, jsonify, send_file, g
+from markdown import markdown
+
+from modules.Blogs import bp
+from modules.Blogs.forms import BlogFrom, CommentForm
+from common.decorators import login_required
+from core.exts import cache, db, redis_client
+from modules.models import BlogModel, CommentModel
+from celery_app import generate_pdf_task  # 导入Celery任务
 
 # 设置每页显示的博客数量
 PER_PAGE = 10

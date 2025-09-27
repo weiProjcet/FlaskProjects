@@ -1,10 +1,8 @@
 import wtforms
-from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms.validators import Email, Length, EqualTo, InputRequired
-from models import UserModel
+from wtforms.validators import Email, Length, EqualTo
 
+from modules.models import UserModel
 
-# form：验证前端提交的表单数据是否符合要求
 
 # 注册页面的表单
 class RegisterForm(wtforms.Form):
@@ -36,23 +34,3 @@ class EmailForm(wtforms.Form):
 class LoginForm(wtforms.Form):
     email = wtforms.StringField(validators=[Email(message='邮箱格式错误')])
     password = wtforms.StringField(validators=[Length(min=6, max=20, message='密码格式错误！大于3，小于20')])
-
-
-class BlogFrom(wtforms.Form):
-    title = wtforms.StringField(validators=[Length(min=5, max=100, message='标题格式错误，大于5，小于100')])
-    tag = wtforms.StringField(validators=[Length(min=5, max=100, message='概述格式，大于5，小于100')])
-    content = wtforms.StringField(validators=[Length(min=5, message='内容格式错误，至少有5个字符')])
-
-
-class CommentForm(wtforms.Form):
-    blog_id = wtforms.IntegerField(validators=[InputRequired(message='必须要传入ID')])
-    comment = wtforms.StringField()
-
-
-class UserProfileForm(wtforms.Form):
-    image = FileField('图片文件', validators=[
-        FileAllowed(['png', 'jpg', 'jpeg', 'gif'], '只能上传图片文件')
-    ])
-    video = FileField('视频文件', validators=[
-        FileAllowed(['mp4', 'avi', 'mov', 'wmv'], '只能上传视频文件')
-    ])

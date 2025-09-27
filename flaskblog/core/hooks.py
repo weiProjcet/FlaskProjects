@@ -1,5 +1,5 @@
 from flask import session, g
-from models import UserModel
+from modules.models import UserModel
 
 
 def register_hooks(app):

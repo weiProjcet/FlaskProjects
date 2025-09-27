@@ -1,4 +1,4 @@
-# cores/logging_config.py
+
 import logging
 from logging.handlers import RotatingFileHandler
 import os

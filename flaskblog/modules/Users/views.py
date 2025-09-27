@@ -1,13 +1,14 @@
 import os
 import time
-from werkzeug.utils import secure_filename
-from flask import Blueprint, render_template, request, flash, redirect, url_for, g, current_app
-from decorators import login_required
-from models import UserProfileModel
-from cores.forms import UserProfileForm
-from exts import db
 
-bp = Blueprint('users', __name__, url_prefix='/users')
+from flask import current_app, flash, redirect, url_for, request, render_template, g
+from werkzeug.utils import secure_filename
+
+from modules.Users import bp
+from modules.Users.forms import UserProfileForm
+from common.decorators import login_required
+from core.exts import db
+from modules.models import UserProfileModel
 
 
 def allowed_file(filename):

@@ -1,13 +1,15 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, current_app
-from exts import db, redis_client
-from models import UserModel, UserProfileModel
-from .forms import RegisterForm, LoginForm, EmailForm
-import string
 import random
-from werkzeug.security import generate_password_hash, check_password_hash
+import string
+
+from flask import request, render_template, current_app, session, redirect, jsonify, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from modules.Auth import bp
+from modules.Auth.forms import LoginForm, EmailForm, RegisterForm
+from core.exts import redis_client, db
+from modules.models import UserModel, UserProfileModel
 from celery_app import send_email_task
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
 """
     登录模块
     login：登录 邮箱、密码
