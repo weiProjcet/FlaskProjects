@@ -51,3 +51,6 @@ MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB max file size
 
 # 确保上传目录存在
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Kafka 配置
+KAFKA_ENABLED = False  # 控制是否启用 Kafka 功能

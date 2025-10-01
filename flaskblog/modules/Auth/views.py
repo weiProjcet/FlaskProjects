@@ -9,7 +9,9 @@ from modules.Auth.forms import LoginForm, EmailForm, RegisterForm
 from core.exts import redis_client, db
 from modules.models import UserModel, UserProfileModel
 from celery_app import send_email_task
+from common.kafkaTest.user_behavior_producer import UserBehaviorProducer
 
+producer = UserBehaviorProducer()
 """
     登录模块
     login：登录 邮箱、密码
@@ -36,6 +38,8 @@ def login():
                 # session：加密后存储在cookie中
                 session['user_id'] = user.id
                 current_app.logger.info(f'用户{user.username}登录成功')
+                producer.send_login_event(user_id=user.id, ip_address=request.remote_addr,
+                                          user_agent=request.user_agent.string)
                 return redirect('/')
             else:
                 return render_template('login.html', error='密码错误')

@@ -4,6 +4,7 @@ import uuid
 from flask import request, render_template, redirect, url_for, current_app, jsonify, send_file, g
 from markdown import markdown
 
+from common.kafkaTest.user_behavior_producer import UserBehaviorProducer
 from modules.Blogs import bp
 from modules.Blogs.forms import BlogFrom, CommentForm
 from common.decorators import login_required
@@ -11,6 +12,7 @@ from core.exts import cache, db, redis_client
 from modules.models import BlogModel, CommentModel
 from celery_app import generate_pdf_task  # 导入Celery任务
 
+producer = UserBehaviorProducer()
 # 设置每页显示的博客数量
 PER_PAGE = 10
 """
@@ -169,7 +171,10 @@ def blog_detail(blog_id):
         )
         cache.set(comments_cache_key, comments, timeout=120)
         current_app.logger.info(f'评论已缓存: {blog_id}, page {page}')
-
+    if g.user:
+        producer.send_view_event(user_id=g.user.id, blog_id=blog_id, session_id=g.session_id)
+    else:
+        producer.send_view_event(user_id='游客', blog_id=blog_id, session_id=g.session_id)
     # 将博客和评论分页对象传递给模板
     return render_template('detail.html', blog=blog, comments=comments)
 
@@ -246,6 +251,7 @@ def download_pdf_file(blog_id, task_id):
         buffer.seek(0)
 
         current_app.logger.info(f'用户{g.user.username}下载了博客{blog_id}的PDF版本')
+        producer.send_download_event(user_id=g.user.id, blog_id=blog_id, file_size=len(pdf_data), download_type='pdf')
 
         # 删除Redis中的数据（一次性下载）
         redis_client.delete(f"pdf_{task_id}")
